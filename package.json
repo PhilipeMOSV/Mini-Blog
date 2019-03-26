@@ -1,0 +1,23 @@
+{
+  "name": "mini-blog",
+  "version": "1.0.0",
+  "description": "Mini blog utilizando Node.js",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PhilipeMOSV/Mini-Blog.git"
+  },
+  "author": "Philipe Matheus",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PhilipeMOSV/Mini-Blog/issues"
+  },
+  "homepage": "https://github.com/PhilipeMOSV/Mini-Blog#readme",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "express": "^4.16.4"
+  }
+}
