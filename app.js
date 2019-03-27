@@ -1,25 +1,17 @@
 var express = require("express");
+var mongoose = require("mongoose");
+var bodyParser = require("body-parser");
+var expressSanitizer = require("express-sanitizer");
+var Blog = require("./models/blog");
+var seedDB = require("./seed");
+
 var app = express();
 
+mongoose.connect("mongodb://localhost:27017/restful_blog_app", {useNewUrlParser: true});
 app.set("view engine", "ejs");
-
-var blogs = [
-    {
-        titulo: "Primeiro Blog",
-        descricao: "Labore mollit quis eu sit. Tempor sint labore aute consequat ad reprehenderit officia id laborum. Ex excepteur proident id sunt. Aliquip proident adipisicing excepteur ullamco eiusmod quis et. Culpa occaecat aliquip deserunt incididunt est anim.",
-        imagem: "https://images.unsplash.com/photo-1553325657-57b3ced42e4c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
-    },
-    {
-        titulo: "Segundo Blog",
-        descricao: "Labore mollit quis eu sit. Tempor sint labore aute consequat ad reprehenderit officia id laborum. Ex excepteur proident id sunt. Aliquip proident adipisicing excepteur ullamco eiusmod quis et. Culpa occaecat aliquip deserunt incididunt est anim.",
-        imagem: "https://images.unsplash.com/photo-1553325657-57b3ced42e4c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
-    },
-    {
-        titulo: "Terceiro Blog",
-        descricao: "Labore mollit quis eu sit. Tempor sint labore aute consequat ad reprehenderit officia id laborum. Ex excepteur proident id sunt. Aliquip proident adipisicing excepteur ullamco eiusmod quis et. Culpa occaecat aliquip deserunt incididunt est anim.",
-        imagem: "https://images.unsplash.com/photo-1553325657-57b3ced42e4c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
-    }
-]
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(expressSanitizer());
+// seedDB();
 
 //ROTAS RESTFUL
 
@@ -28,13 +20,32 @@ app.get("/", function(req, res) {
 });
 
 app.get("/blogs", function(req, res) {
-    res.render("index", {blogs: blogs});
+    Blog.find({}, function(err, blogs) {
+        if(err) console.log(err);
+        else {
+            res.render("index", {blogs: blogs});
+        }
+    });
 });
 
-app.get("/blogs/novo", function(req, res) {
+app.get("/blog/novo", function(req, res) {
     res.render("novo");
 });
 
+app.post("/blogs", function(req, res) {
+    req.body.blog.descricao = req.sanitize(req.body.blog.descricao);
+    Blog.create(req.body.blog, function(err, novoBlog) {
+        if(err) console.log(err);
+        else {
+            res.redirect("/blogs");
+        }
+    })
+});
+
+app.get("/blogs/:id", function(req, res) {
+    res.send("exibir");
+});
+
 app.listen(3000, function() {
-    console.log("Serven Online...");
+    console.log("Server Online...");
 });
