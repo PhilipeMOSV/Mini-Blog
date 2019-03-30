@@ -9,9 +9,10 @@ var app = express();
 
 mongoose.connect("mongodb://localhost:27017/restful_blog_app", {useNewUrlParser: true});
 app.set("view engine", "ejs");
+app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(expressSanitizer());
-// seedDB();
+seedDB();
 
 //ROTAS RESTFUL
 
@@ -28,7 +29,8 @@ app.get("/blogs", function(req, res) {
     });
 });
 
-app.get("/blog/novo", function(req, res) {
+// Criar
+app.get("/blogs/novo", function(req, res) {
     res.render("novo");
 });
 
@@ -42,9 +44,25 @@ app.post("/blogs", function(req, res) {
     })
 });
 
+// Exibir
 app.get("/blogs/:id", function(req, res) {
-    res.send("exibir");
+    Blog.findById(req.params.id, function(err, blog){
+        if(err) res.redirect("/blogs");
+        else {
+            res.render("exibir", {blog: blog});
+        }
+    })
 });
+
+// Editar
+// app.get("/blogs/:id/editar", function(req, res){
+//     Blog.findById(req.params.id, function(err, blog){
+//         if(err) console.log(err);
+//         else {
+//             res.render("editar", {blog: blog});
+//         }
+//     });
+// });
 
 app.listen(3000, function() {
     console.log("Server Online...");
